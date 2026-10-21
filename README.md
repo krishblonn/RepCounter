@@ -1,37 +1,116 @@
-# RepCounter & Daily Task Routine
+# 🏋️ RepCounter: AI Fitness Trainer
 
-A browser-based exercise rep counter, form checker, and structured **Daily Task Routine** system using webcam pose estimation and MediaPipe. Built as a proof of concept with zero backend servers and 100% client-side privacy.
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38Bdf8?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/)
+[![MediaPipe](https://img.shields.io/badge/Google_MediaPipe-4285F4?style=flat-square&logo=google&logoColor=white)](https://developers.google.com/mediapipe)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-## Features
-- **Daily Task Routine:** Configure custom target reps for Push-ups, Squats, and Bicep Curls with automatic persistence in browser LocalStorage.
-- **Auto-Advance & 2-Minute Rest Timers:** Automatically transitions from exercise to rest period upon hitting target reps, complete with a countdown timer and a 'Skip Rest' button.
-- **Real-Time Pose Tracking:** Uses MediaPipe Pose running locally in the browser to detect body keypoints via webcam with zero video upload.
-- **Calibrated Exercise Support:** Supports Push-ups, Squats, and fully calibrated Bicep Curls with custom angle thresholds and posture checks.
-- **Finite State Machine Rep Counting:** Accurate counting using "up" and "down" states with temporal smoothing (moving average) to eliminate jitter and double-counting.
-- **Workout & Routine History:** Automatically saves set and routine summaries to browser LocalStorage.
+> **An intelligent, privacy-first browser-based fitness HUD and Daily Task Routine system powered by real-time computer vision with zero server uploads.**
 
-## Prerequisites
-- A modern web browser (Chrome, Firefox, Edge, Safari) with webcam support.
-- A local static web server (e.g., Python 3).
+---
 
-## Compiling and Running
-To run the app locally:
+## 📸 Demo Preview
 
-1. Start a local static server in the project directory:
+> *Replace `demo.gif` with your actual demo recording or screenshot.*
+
+![RepCounter Demo](demo.gif)
+
+---
+
+## 📑 Table of Contents
+
+- [✨ Key Features](#-key-features)
+- [🛠️ Tech Stack & Architecture](#️-tech-stack--architecture)
+- [🚀 Quick Start (How to Run)](#-quick-start-how-to-run)
+- [🧪 Running Unit Tests](#-running-unit-tests)
+- [🏆 The Hackathon (Devpost)](#-the-hackathon-devpost)
+- [📜 License](#-license)
+
+---
+
+## ✨ Key Features
+
+- [x] **Real-time AI Pose Estimation:** Runs 100% client-side in your browser via Google MediaPipe Pose with zero video uploads and complete privacy.
+- [x] **Structured Daily Task Routine:** Configure and persist custom rep targets for Push-ups, Squats, and Bicep Curls with automated routine progression.
+- [x] **2-Minute Auto-Rest Timer:** Automatically triggers an animated countdown rest timer between exercises with a manual 'Skip Rest' option.
+- [x] **Live Posture & Form Checking:** Real-time visual feedback badges (Green for correct form, glowing red alert for posture warnings).
+- [x] **Persistent Local Storage History:** Automatically saves set summaries, rep counts, and routine scores to browser LocalStorage.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+RepCounter is built with a modular, zero-build-step ES6 architecture designed for blazing-fast performance on any hardware:
+
+```
+RepCounter/
+├── index.html              # Modern Glassmorphic Dashboard, Workout HUD, Setup & Rest Modals
+├── style.css               # Custom theme, animations, and circular progress ring
+├── src/
+│   ├── pose.js             # MediaPipe camera stream & keypoint extractor
+│   ├── counter.js          # 3-point angle math, moving average smoothing, & finite state machine
+│   ├── rules.js            # Exercise configurations & form posture rules
+│   ├── storage.js          # LocalStorage persistence manager
+│   └── routine.js          # Daily Task Routine queue & rest interval manager
+└── tests/
+    └── test.html           # Browser unit test suite for angle math, state machine, & persistence
+```
+
+### How Counting & Timers Work
+1. **Keypoint Streaming:** MediaPipe Pose extracts 3D body keypoints per video frame.
+2. **Angle Calculation & Smoothing:** Joint angles are computed and filtered through a 5-frame moving average to eliminate camera jitter.
+3. **Finite State Machine:** Reps increment precisely when crossing hysteresis thresholds between "up" and "down" states.
+4. **Routine Queue & Rest Timer:** Automatically sequences exercises and counts down rest periods using interval timers.
+
+---
+
+## 🚀 Quick Start (How to Run)
+
+To run RepCounter locally on your laptop:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/RepCounter.git
+   cd RepCounter
+   ```
+2. **Start a local static web server:**
    ```bash
    python3 -m http.server 8000
    ```
-2. Open your browser and navigate to:
+3. **Open your browser** and navigate to:
    ```
    http://localhost:8000
    ```
+4. **Allow webcam access** when prompted and start training!
 
-## Running Unit Tests
-To run the test suite for angle calculations, state machine rep counting, and routine queue progression:
-- Open `http://localhost:8000/tests/test.html` in your browser.
+---
 
-## How Rep Counting Works
-1. **Keypoint Extraction:** MediaPipe Pose streams 33 3D body keypoints per video frame.
-2. **Angle Calculation:** For each exercise, three keypoints form a joint angle (e.g., shoulder-elbow-wrist for push-ups and bicep curls, or hip-knee-ankle for squats).
-3. **Temporal Smoothing:** Angle readings are passed through a moving average filter over the last 5 frames to remove camera jitter.
-4. **State Machine:** A finite state machine tracks whether the user is in the "up" or "down" position. A repetition is incremented only when the angle crosses the down threshold and successfully returns past the up threshold.
+## 🧪 Running Unit Tests
+
+To verify the core math, state machine rep counting, and local storage persistence:
+
+1. Ensure your local server is running (`python3 -m http.server 8000`).
+2. Open your browser and navigate to:
+   ```
+   http://localhost:8000/tests/test.html
+   ```
+
+---
+
+## 🏆 The Hackathon (Devpost)
+
+This project was built for the **Build With AI: Basics** hackathon, demonstrating end-to-end AI agent collaboration and plan-first software development. 
+
+Explore our planning artifacts in the `devpost/` directory:
+- [`scope.md`](devpost/scope.md) — Project scope and kernel definition
+- [`prd.md`](devpost/prd.md) — Product requirements and user journey
+- [`spec.md`](devpost/spec.md) — Technical specification and architecture
+- [`checklist.md`](devpost/checklist.md) — Build checklist and execution log
+- [`app-map.html`](devpost/app-map.html) — Visual take-home architecture map
+
+---
+
+## 📜 License
+
+This project is open-source and available under the [MIT License](LICENSE).

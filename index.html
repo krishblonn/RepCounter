@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepCounter — AI Workout Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- MediaPipe CDN scripts for later slices -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-4 h-4 rounded-full bg-emerald-500 animate-pulse"></div>
+            <h1 class="text-xl font-bold tracking-wider text-emerald-400">RepCounter<span class="text-xs ml-2 px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 font-normal">PoC</span></h1>
+        </div>
+        <div class="text-sm text-slate-400">
+            <span>Local AI Fitness HUD</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+
+        <!-- VIEW 1: Dashboard -->
+        <div id="dashboard-view" class="space-y-8">
+            <div class="text-center space-y-2">
+                <h2 class="text-3xl font-extrabold text-white tracking-tight">Select an Exercise</h2>
+                <p class="text-slate-400 max-w-xl mx-auto">Position your webcam, select your movement, and get real-time rep counting and posture feedback with zero server uploads.</p>
+            </div>
+
+            <!-- Exercise Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Push-ups Card -->
+                <div onclick="startWorkout('pushups')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                    <div>
+                        <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Upper Body</div>
+                        <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Push-ups</h3>
+                        <p class="text-slate-400 text-sm mt-2">Elbow bend to 90°, back straightness posture checks.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
+                        <span>Start Workout</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </div>
+
+                <!-- Squats Card -->
+                <div onclick="startWorkout('squats')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                    <div>
+                        <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Lower Body</div>
+                        <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Squats</h3>
+                        <p class="text-slate-400 text-sm mt-2">Hips below knee level, chest up, knees out.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
+                        <span>Start Workout</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </div>
+
+                <!-- Bicep Curls Card -->
+                <div onclick="startWorkout('curls')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                    <div>
+                        <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Arms</div>
+                        <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Bicep Curls</h3>
+                        <p class="text-slate-400 text-sm mt-2">Elbow flexion, upper arm stability checks.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
+                        <span>Start Workout</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workout History Section -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-md mt-10">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-white">Workout History</h3>
+                    <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition-colors">Clear History</button>
+                </div>
+                <div id="history-container" class="overflow-x-auto">
+                    <p class="text-slate-400 text-sm text-center py-6">No workouts recorded yet. Start a session above!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: Active Workout Screen (Hidden by default) -->
+        <div id="workout-view" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 border border-slate-700 rounded-xl px-6 py-4">
+                <div>
+                    <span id="active-exercise-name" class="text-emerald-400 text-sm uppercase font-bold tracking-wider">Exercise</span>
+                    <h3 class="text-2xl font-extrabold text-white">Active Workout Session</h3>
+                </div>
+                <button onclick="stopWorkout()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md transition-colors flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <span>Stop Workout</span>
+                </button>
+            </div>
+
+            <!-- Video & HUD Container -->
+            <div class="relative bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl aspect-video flex items-center justify-center">
+                <!-- Webcam Video (Hidden element processed by MediaPipe) -->
+                <video id="webcam" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100" playsinline></video>
+                <!-- Canvas Overlay for Skeleton & HUD -->
+                <canvas id="output-canvas" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100"></canvas>
+
+                <!-- HUD Overlay Top-Right: Rep Counter -->
+                <div class="absolute top-6 right-6 bg-slate-900/80 backdrop-blur border border-slate-700 px-6 py-4 rounded-xl shadow-xl flex items-center space-x-6">
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Total Reps</div>
+                        <div id="hud-rep-count" class="text-4xl font-extrabold text-emerald-400">0</div>
+                    </div>
+                    <div class="border-l border-slate-700 pl-6">
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Form Status</div>
+                        <div id="hud-form-status" class="text-lg font-bold text-emerald-400">Good</div>
+                    </div>
+                </div>
+
+                <!-- Placeholder state before MediaPipe loads in slice 2 -->
+                <div id="workout-loading" class="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center space-y-4">
+                    <div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-slate-300 font-medium">Initializing camera & pose engine...</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-500">
+        RepCounter PoC &bull; Built with MediaPipe & Vanilla JS &bull; Privacy First (Local Processing)
+    </footer>
+
+    <!-- Script Module -->
+    <script type="module">
+        import { getWorkoutHistory, saveWorkoutSet, clearWorkoutHistory } from './src/storage.js';
+
+        // Expose helper functions to global scope for inline onclick handlers
+        window.startWorkout = function(exerciseType) {
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('workout-view').classList.remove('hidden');
+            document.getElementById('active-exercise-name').innerText = exerciseType.toUpperCase();
+
+            // For Slice 1 testing, simulate loading completion after 1 second
+            setTimeout(() => {
+                const loadingEl = document.getElementById('workout-loading');
+                if (loadingEl) loadingEl.classList.add('hidden');
+            }, 1000);
+        };
+
+        window.stopWorkout = function() {
+            // Save mock set for slice 1 testing
+            const saved = saveWorkoutSet({
+                exercise: document.getElementById('active-exercise-name').innerText,
+                totalReps: 10,
+                goodReps: 9,
+                badReps: 1,
+                formAccuracy: 90,
+                durationSeconds: 30
+            });
+
+            document.getElementById('workout-view').classList.add('hidden');
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            loadHistoryUI();
+        };
+
+        window.clearHistory = function() {
+            clearWorkoutHistory();
+            loadHistoryUI();
+        };
+
+        function loadHistoryUI() {
+            const history = getWorkoutHistory();
+            const container = document.getElementById('history-container');
+
+            if (history.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-sm text-center py-6">No workouts recorded yet. Start a session above!</p>`;
+                return;
+            }
+
+            let html = `
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-700 text-xs text-slate-400 uppercase">
+                            <th class="py-3 px-4">Date</th>
+                            <th class="py-3 px-4">Exercise</th>
+                            <th class="py-3 px-4">Reps</th>
+                            <th class="py-3 px-4">Form Accuracy</th>
+                            <th class="py-3 px-4">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700 text-sm">
+            `;
+
+            history.forEach(item => {
+                const dateStr = new Date(item.date).toLocaleString();
+                html += `
+                    <tr class="hover:bg-slate-750 transition-colors">
+                        <td class="py-3 px-4 text-slate-400">${dateStr}</td>
+                        <td class="py-3 px-4 font-semibold text-white">${item.exercise}</td>
+                        <td class="py-3 px-4 text-emerald-400 font-bold">${item.totalReps}</td>
+                        <td class="py-3 px-4 text-slate-300">${item.formAccuracy}%</td>
+                        <td class="py-3 px-4 text-slate-400">${item.durationSeconds}s</td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        // Initialize history table on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistoryUI();
+        });
+    </script>
+</body>
+</html>

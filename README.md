@@ -14,7 +14,7 @@
 
 > *Replace `demo.gif` with your actual demo recording or screenshot.*
 
-![RepCounter Demo](demo.gif)
+![RepCounter Demo](heroo.png)
 
 ---
 

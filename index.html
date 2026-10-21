@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RepCounter — AI Workout Companion & Daily Task Routine</title>
+    <title>RepCounter — Modern AI Fitness HUD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <!-- MediaPipe CDN scripts -->
@@ -11,133 +11,160 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased flex flex-col">
+<body class="min-h-screen flex flex-col antialiased">
+
+    <!-- Ambient glowing background -->
+    <div class="ambient-glow"></div>
 
     <!-- Header -->
-    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 flex justify-between items-center shadow-lg">
+    <header class="glass-panel sticky top-0 z-40 py-4 px-6 flex justify-between items-center border-b border-slate-800/80">
         <div class="flex items-center space-x-3">
-            <div class="w-4 h-4 rounded-full bg-emerald-500 animate-pulse"></div>
-            <h1 class="text-xl font-bold tracking-wider text-emerald-400">RepCounter<span class="text-xs ml-2 px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 font-normal">Daily Routine PoC</span></h1>
+            <div class="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-pulse shadow-lg shadow-emerald-500/50"></div>
+            <h1 class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">REPCOUNTER</h1>
         </div>
         <div class="flex items-center space-x-4">
-            <a href="tests/test.html" target="_blank" class="text-xs text-slate-400 hover:text-emerald-400 transition-colors underline">Run Unit Tests</a>
-            <span class="text-sm text-slate-400">Local AI Fitness HUD</span>
+            <a href="tests/test.html" target="_blank" class="text-xs font-medium text-slate-400 hover:text-emerald-400 transition-colors underline">Unit Tests</a>
+            <span class="text-xs px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-semibold">AI HUD v2.0</span>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl flex flex-col justify-center">
 
         <!-- VIEW 1: Dashboard -->
-        <div id="dashboard-view" class="space-y-8">
-            <div class="text-center space-y-4">
-                <h2 class="text-3xl font-extrabold text-white tracking-tight">Your AI Fitness Companion</h2>
-                <p class="text-slate-400 max-w-xl mx-auto">Choose an individual exercise or start your structured Daily Task Routine with automated rest timers and rep progression.</p>
+        <div id="dashboard-view" class="view-transition space-y-10">
+            <div class="text-center space-y-3">
+                <span class="px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">Zero-Server Computer Vision</span>
+                <h2 class="text-4xl md:text-5xl font-black text-white tracking-tight">Train Smarter with AI</h2>
+                <p class="text-slate-400 max-w-xl mx-auto text-base">Select your solo workout or launch your structured Daily Task Routine with live form checking and rest intervals.</p>
 
                 <!-- Daily Task Routine Launch Button -->
-                <button onclick="openDailyTaskSetup()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold px-8 py-4 rounded-2xl shadow-xl shadow-emerald-900/40 text-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-3 mx-auto">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span>Start Daily Task Routine</span>
-                </button>
+                <div class="pt-2">
+                    <button onclick="openDailyTaskSetup()" class="relative group overflow-hidden rounded-2xl p-px font-bold focus:outline-none shadow-2xl">
+                        <span class="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 transition-all duration-500 group-hover:scale-105"></span>
+                        <span class="relative px-8 py-4 bg-slate-950 rounded-2xl flex items-center space-x-3 text-white transition-all duration-300 group-hover:bg-opacity-80">
+                            <svg class="w-6 h-6 text-emerald-400 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <span class="text-lg tracking-wide">Start Daily Task Routine</span>
+                        </span>
+                    </button>
+                </div>
             </div>
 
             <!-- Exercise Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                 <!-- Push-ups Card -->
-                <div onclick="startSingleWorkout('pushups')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                <div onclick="startSingleWorkout('pushups')" class="glass-card rounded-2xl p-6 cursor-pointer group flex flex-col justify-between">
                     <div>
-                        <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Upper Body</div>
-                        <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Push-ups</h3>
-                        <p class="text-slate-400 text-sm mt-2">Elbow bend to 90°, back straightness posture checks.</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-3xl">💪</span>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Upper Body</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white group-hover:text-emerald-400 transition-colors">Push-ups</h3>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Elbow bend to 90°, back straightness posture checks.</p>
                     </div>
-                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
-                        <span>Practice Solo</span>
-                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-semibold text-sm">
+                        <span>Solo Practice</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
 
                 <!-- Squats Card -->
-                <div onclick="startSingleWorkout('squats')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                <div onclick="startSingleWorkout('squats')" class="glass-card rounded-2xl p-6 cursor-pointer group flex flex-col justify-between">
                     <div>
-                        <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Lower Body</div>
-                        <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Squats</h3>
-                        <p class="text-slate-400 text-sm mt-2">Hips below knee level, chest up, knees out.</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-3xl">🦵</span>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Lower Body</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white group-hover:text-cyan-400 transition-colors">Squats</h3>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Hips below knee level, chest up, knees out.</p>
                     </div>
-                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
-                        <span>Practice Solo</span>
-                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <div class="mt-6 flex items-center justify-between text-cyan-400 font-semibold text-sm">
+                        <span>Solo Practice</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
 
                 <!-- Bicep Curls Card -->
-                <div onclick="startSingleWorkout('curls')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                <div onclick="startSingleWorkout('curls')" class="glass-card rounded-2xl p-6 cursor-pointer group flex flex-col justify-between">
                     <div>
-                        <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Arms</div>
-                        <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Bicep Curls</h3>
-                        <p class="text-slate-400 text-sm mt-2">Elbow flexion, upper arm stability checks.</p>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-3xl">🏋️</span>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Arms</span>
+                        </div>
+                        <h3 class="text-2xl font-black text-white group-hover:text-purple-400 transition-colors">Bicep Curls</h3>
+                        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Elbow flexion, upper arm stability checks.</p>
                     </div>
-                    <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
-                        <span>Practice Solo</span>
-                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <div class="mt-6 flex items-center justify-between text-purple-400 font-semibold text-sm">
+                        <span>Solo Practice</span>
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
             </div>
 
             <!-- Workout History Section -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-md mt-10">
+            <div class="glass-panel rounded-2xl p-6 md:p-8 shadow-xl mt-12">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-white">Workout & Routine History</h3>
-                    <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition-colors">Clear History</button>
+                    <h3 class="text-xl font-extrabold text-white flex items-center space-x-2">
+                        <span>📊</span>
+                        <span>Workout & Routine History</span>
+                    </h3>
+                    <button onclick="clearHistory()" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors">Clear History</button>
                 </div>
                 <div id="history-container" class="overflow-x-auto">
-                    <p class="text-slate-400 text-sm text-center py-6">No workouts recorded yet. Start a session above!</p>
+                    <p class="text-slate-500 text-sm text-center py-8">No workouts recorded yet. Start your first session above!</p>
                 </div>
             </div>
         </div>
 
         <!-- VIEW 2: Active Workout Screen (Hidden by default) -->
-        <div id="workout-view" class="hidden space-y-6">
-            <div class="flex justify-between items-center bg-slate-800 border border-slate-700 rounded-xl px-6 py-4">
+        <div id="workout-view" class="hidden view-transition space-y-6">
+            <div class="glass-panel rounded-2xl px-6 py-4 flex justify-between items-center shadow-lg">
                 <div>
-                    <span id="active-exercise-name" class="text-emerald-400 text-sm uppercase font-bold tracking-wider">Exercise</span>
-                    <h3 id="active-session-title" class="text-2xl font-extrabold text-white">Active Workout Session</h3>
+                    <span id="active-exercise-name" class="text-emerald-400 text-xs uppercase font-extrabold tracking-widest">Exercise</span>
+                    <h3 id="active-session-title" class="text-xl md:text-2xl font-black text-white">Active Workout Session</h3>
                 </div>
-                <button onclick="stopWorkout()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md transition-colors flex items-center space-x-2">
+                <button onclick="stopWorkout()" class="bg-red-600/90 hover:bg-red-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-red-900/30 transition-all flex items-center space-x-2 border border-red-500/30">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     <span>End Session</span>
                 </button>
             </div>
 
             <!-- Video & HUD Container -->
-            <div class="relative bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl aspect-video flex items-center justify-center">
+            <div class="relative bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl aspect-video flex items-center justify-center">
                 <!-- Webcam Video Element -->
                 <video id="webcam" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100" playsinline></video>
                 <!-- Canvas Overlay for Skeleton & HUD -->
                 <canvas id="output-canvas" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100"></canvas>
 
-                <!-- HUD Overlay Top-Right: Rep Counter & Target -->
-                <div class="absolute top-6 right-6 bg-slate-900/80 backdrop-blur border border-slate-700 px-6 py-4 rounded-xl shadow-xl flex items-center space-x-6 z-10">
+                <!-- HUD Overlay Top-Right: Massive Rep Counter & Glowing Form Status -->
+                <div class="absolute top-6 right-6 glass-panel px-8 py-6 rounded-2xl shadow-2xl flex items-center space-x-8 z-10 border border-slate-700/60">
                     <div>
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Reps / Target</div>
-                        <div class="text-3xl font-extrabold text-emerald-400"><span id="hud-rep-count">0</span><span id="hud-target-display" class="text-slate-500 text-xl font-normal"></span></div>
+                        <div class="text-xs text-slate-400 uppercase font-black tracking-widest mb-1">Reps / Target</div>
+                        <div class="text-5xl md:text-6xl font-black text-emerald-400 tracking-tight">
+                            <span id="hud-rep-count">0</span><span id="hud-target-display" class="text-slate-500 text-2xl font-semibold"></span>
+                        </div>
                     </div>
-                    <div class="border-l border-slate-700 pl-6">
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Form Status</div>
-                        <div id="hud-form-status" class="text-lg font-bold text-emerald-400">Good</div>
+                    <div class="border-l border-slate-700/80 pl-8">
+                        <div class="text-xs text-slate-400 uppercase font-black tracking-widest mb-1">Form Status</div>
+                        <div id="hud-form-status-badge" class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-base font-extrabold shadow-lg shadow-emerald-900/40 transition-all">
+                            Good
+                        </div>
                     </div>
                 </div>
 
                 <!-- Error Warning Overlay (Hidden by default) -->
-                <div id="warning-overlay" class="absolute inset-0 bg-red-950/80 backdrop-blur-md hidden flex flex-col items-center justify-center space-y-4 z-20 px-4 text-center">
-                    <svg class="w-16 h-16 text-red-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    <h3 id="warning-title" class="text-2xl font-bold text-white">Tracking Paused</h3>
-                    <p id="warning-message" class="text-red-200 max-w-md text-sm">Please adjust lighting or step fully into the camera frame.</p>
+                <div id="warning-overlay" class="absolute inset-0 bg-red-950/85 backdrop-blur-xl hidden flex flex-col items-center justify-center space-y-4 z-20 px-4 text-center">
+                    <div class="w-20 h-20 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 animate-bounce">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    <h3 id="warning-title" class="text-3xl font-black text-white">Tracking Paused</h3>
+                    <p id="warning-message" class="text-red-200 max-w-md text-base font-medium">Please adjust lighting or step fully into the camera frame.</p>
                 </div>
 
                 <!-- Loading state -->
-                <div id="workout-loading" class="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center space-y-4 z-30">
-                    <div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-slate-300 font-medium">Initializing MediaPipe Pose Engine...</p>
+                <div id="workout-loading" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center space-y-4 z-30">
+                    <div class="w-14 h-14 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin shadow-lg shadow-emerald-500/50"></div>
+                    <p class="text-slate-300 font-bold tracking-wide">Initializing MediaPipe Pose Engine...</p>
                 </div>
             </div>
         </div>
@@ -145,88 +172,102 @@
     </main>
 
     <!-- Daily Task Setup Modal -->
-    <div id="setup-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full shadow-2xl space-y-6">
+    <div id="setup-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden flex items-center justify-center z-50 p-4 view-transition">
+        <div class="glass-panel rounded-3xl p-8 md:p-10 max-w-lg w-full shadow-2xl space-y-8 border border-slate-700/80">
             <div class="text-center space-y-2">
-                <h3 class="text-2xl font-bold text-white">Daily Task Routine Setup</h3>
-                <p class="text-slate-400 text-sm">Configure your target reps for today's workout. Your targets are automatically saved for next time.</p>
+                <h3 class="text-3xl font-black text-white tracking-tight">Daily Task Routine</h3>
+                <p class="text-slate-400 text-sm">Configure your rep targets for today. Automatically saved for next time.</p>
             </div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Push-ups Target Reps</label>
-                    <input id="target-pushups" type="number" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" value="10">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-emerald-400">Push-ups Target</label>
+                    <input id="target-pushups" type="number" min="1" max="100" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-5 py-3.5 text-white font-bold text-lg neon-input focus:outline-none transition-all" value="10">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Squats Target Reps</label>
-                    <input id="target-squats" type="number" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" value="10">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-cyan-400">Squats Target</label>
+                    <input id="target-squats" type="number" min="1" max="100" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-5 py-3.5 text-white font-bold text-lg neon-input focus:outline-none transition-all" value="10">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Bicep Curls Target Reps</label>
-                    <input id="target-curls" type="number" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" value="10">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-purple-400">Bicep Curls Target</label>
+                    <input id="target-curls" type="number" min="1" max="100" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-5 py-3.5 text-white font-bold text-lg neon-input focus:outline-none transition-all" value="10">
                 </div>
             </div>
 
-            <div class="flex space-x-3">
-                <button onclick="closeDailyTaskSetup()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 rounded-xl transition-colors">Cancel</button>
-                <button onclick="startDailyRoutine()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">Start Routine</button>
+            <div class="flex space-x-4 pt-2">
+                <button onclick="closeDailyTaskSetup()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 rounded-2xl transition-colors border border-slate-700">Cancel</button>
+                <button onclick="startDailyRoutine()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-emerald-900/50 transition-all transform hover:scale-[1.02]">Start Routine</button>
             </div>
         </div>
     </div>
 
     <!-- Rest Timer Overlay (Hidden by default) -->
-    <div id="rest-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-10 max-w-lg w-full shadow-2xl text-center space-y-6">
-            <div class="text-emerald-400 font-semibold uppercase tracking-wider text-sm">Rest Period</div>
-            <h3 class="text-3xl font-extrabold text-white">Catch Your Breath</h3>
+    <div id="rest-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-xl hidden flex items-center justify-center z-50 p-4 view-transition">
+        <div class="glass-panel rounded-3xl p-10 max-w-md w-full shadow-2xl text-center space-y-8 border border-slate-700/80">
+            <div>
+                <span class="px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest">Rest Period</span>
+                <h3 class="text-3xl font-black text-white mt-3">Catch Your Breath</h3>
+            </div>
 
-            <!-- Large Countdown Timer -->
-            <div id="rest-timer-display" class="text-7xl font-black text-emerald-400 tracking-wider my-6">02:00</div>
+            <!-- Circular Progress Ring Timer -->
+            <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="96" cy="96" r="82" stroke="currentColor" stroke-width="12" class="text-slate-800" fill="transparent" />
+                    <circle id="rest-progress-ring" cx="96" cy="96" r="82" stroke="currentColor" stroke-width="12" class="text-emerald-400 progress-ring__circle" stroke-dasharray="515" stroke-dashoffset="0" fill="transparent" stroke-linecap="round" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div id="rest-timer-display" class="text-4xl font-black text-white tracking-wider">02:00</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase mt-1">Remaining</div>
+                </div>
+            </div>
 
-            <p class="text-slate-400 text-sm">Next Exercise: <span id="rest-next-exercise" class="text-white font-bold">Squats</span></p>
+            <div class="space-y-2">
+                <p class="text-slate-400 text-sm">Next Up in Queue:</p>
+                <p id="rest-next-exercise" class="text-xl font-black text-emerald-400">Squats</p>
+            </div>
 
-            <button onclick="skipRestTimer()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg text-lg transition-colors">
+            <button onclick="skipRestTimer()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-emerald-900/50 transition-all transform hover:scale-[1.02]">
                 Skip Rest & Continue
             </button>
         </div>
     </div>
 
     <!-- Set Summary / Routine Summary Modal -->
-    <div id="summary-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full shadow-2xl space-y-6">
+    <div id="summary-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4 view-transition">
+        <div class="glass-panel rounded-3xl p-8 md:p-10 max-w-md w-full shadow-2xl space-y-6 border border-slate-700/80">
             <div class="text-center space-y-2">
-                <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-xl shadow-emerald-900/40">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 </div>
-                <h3 id="summary-title" class="text-2xl font-bold text-white">Workout Complete!</h3>
-                <p id="summary-exercise-subtitle" class="text-emerald-400 text-sm font-semibold uppercase">Set Summary</p>
+                <h3 id="summary-title" class="text-3xl font-black text-white tracking-tight">Workout Complete!</h3>
+                <p id="summary-exercise-subtitle" class="text-emerald-400 text-xs font-black uppercase tracking-widest">Set Summary</p>
             </div>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-2 gap-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+            <div class="grid grid-cols-2 gap-4 bg-slate-900/70 p-5 rounded-2xl border border-slate-700/80">
                 <div class="text-center">
-                    <div class="text-xs text-slate-400 uppercase">Total Reps</div>
-                    <div id="summary-total-reps" class="text-3xl font-extrabold text-emerald-400">0</div>
+                    <div class="text-xs text-slate-400 uppercase font-bold">Total Reps</div>
+                    <div id="summary-total-reps" class="text-4xl font-black text-emerald-400 mt-1">0</div>
                 </div>
-                <div class="text-center border-l border-slate-700">
-                    <div class="text-xs text-slate-400 uppercase">Duration</div>
-                    <div id="summary-duration" class="text-3xl font-extrabold text-white">0s</div>
+                <div class="text-center border-l border-slate-700/80">
+                    <div class="text-xs text-slate-400 uppercase font-bold">Duration</div>
+                    <div id="summary-duration" class="text-4xl font-black text-white mt-1">0s</div>
                 </div>
-                <div class="text-center pt-4 border-t border-slate-700 col-span-2">
-                    <div class="text-xs text-slate-400 uppercase">Form Accuracy</div>
-                    <div id="summary-accuracy" class="text-2xl font-bold text-emerald-300">100%</div>
+                <div class="text-center pt-4 border-t border-slate-700/80 col-span-2">
+                    <div class="text-xs text-slate-400 uppercase font-bold">Form Accuracy</div>
+                    <div id="summary-accuracy" class="text-3xl font-black text-emerald-300 mt-1">100%</div>
                 </div>
             </div>
 
-            <button onclick="closeSummaryModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">
+            <button onclick="closeSummaryModal()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-emerald-900/50 transition-all transform hover:scale-[1.02]">
                 Return to Dashboard
             </button>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-slate-800 border-t border-slate-700 py-4 text-center text-xs text-slate-500">
-        RepCounter PoC &bull; Built with MediaPipe & Vanilla JS &bull; Privacy First (Local Processing)
+    <footer class="glass-panel py-6 text-center text-xs text-slate-500 border-t border-slate-800/80 mt-12">
+        <p class="font-medium">RepCounter Modern AI Fitness HUD &bull; Privacy First &bull; 100% Client-Side</p>
     </footer>
 
     <!-- Script Module -->
@@ -276,7 +317,6 @@
 
         function runNextRoutineExercise() {
             if (routineManager.isComplete()) {
-                // Routine finished!
                 isRoutineMode = false;
                 const summary = routineManager.getTotalSummary();
 
@@ -305,7 +345,6 @@
 
         window.startSingleWorkout = function(exerciseType) {
             isRoutineMode = false;
-            const config = EXERCISE_CONFIGS[exerciseType];
             startExerciseSession(exerciseType, 0, false);
         };
 
@@ -325,7 +364,10 @@
             document.getElementById('active-session-title').innerText = routineMode ? `Daily Routine (${routineManager.currentIndex + 1}/3)` : 'Solo Practice';
             document.getElementById('hud-rep-count').innerText = '0';
             document.getElementById('hud-target-display').innerText = routineMode ? ` / ${target}` : '';
-            document.getElementById('hud-form-status').innerText = 'Good';
+
+            const formBadge = document.getElementById('hud-form-status-badge');
+            formBadge.innerText = 'Good';
+            formBadge.className = 'px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-base font-extrabold shadow-lg shadow-emerald-900/40 transition-all';
 
             sessionStartTime = Date.now();
 
@@ -343,22 +385,25 @@
                             const result = repCounter.update(angle);
 
                             if (result.repCompleted) {
-                                document.getElementById('hud-rep-count').innerText = result.reps;
+                                const repEl = document.getElementById('hud-rep-count');
+                                repEl.innerText = result.reps;
+                                repEl.classList.remove('rep-pulse');
+                                void repEl.offsetWidth; // trigger reflow for animation
+                                repEl.classList.add('rep-pulse');
 
-                                // Check if routine target reached
                                 if (isRoutineMode && result.reps >= targetReps) {
                                     onRoutineExerciseComplete();
                                 }
                             }
 
                             const formResult = config.checkForm(landmarks);
-                            const formStatusEl = document.getElementById('hud-form-status');
+                            const badge = document.getElementById('hud-form-status-badge');
                             if (formResult.isGood) {
-                                formStatusEl.innerText = 'Good';
-                                formStatusEl.className = 'text-lg font-bold text-emerald-400';
+                                badge.innerText = 'Good';
+                                badge.className = 'px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-base font-extrabold shadow-lg shadow-emerald-900/40 transition-all';
                             } else {
-                                formStatusEl.innerText = formResult.message;
-                                formStatusEl.className = 'text-lg font-bold text-yellow-400';
+                                badge.innerText = formResult.message;
+                                badge.className = 'px-4 py-2 rounded-xl bg-red-500/25 border border-red-500/50 text-red-300 text-base font-extrabold shadow-lg shadow-red-900/50 transition-all animate-pulse';
                             }
                         }
                     },
@@ -395,11 +440,9 @@
             const current = routineManager.getCurrentExercise();
             routineManager.recordResult(current.id, repCounter.reps, repCounter.reps, 0, durationSeconds);
 
-            // Hide workout view
             document.getElementById('workout-view').classList.add('hidden');
             document.getElementById('workout-loading').classList.remove('hidden');
 
-            // Advance queue and get next exercise name for rest timer screen
             const nextEx = routineManager.advance();
             if (nextEx) {
                 document.getElementById('rest-next-exercise').innerText = nextEx.name;
@@ -407,15 +450,22 @@
                 document.getElementById('rest-next-exercise').innerText = 'Finalizing...';
             }
 
-            // Show 2-minute rest timer
             document.getElementById('rest-modal').classList.remove('hidden');
 
+            const totalRestTime = 120;
+            const circle = document.getElementById('rest-progress-ring');
+            const circumference = 2 * Math.PI * 82; // r = 82
+
             restTimer = new RestTimer(
-                120,
+                totalRestTime,
                 (remaining) => {
                     const mins = String(Math.floor(remaining / 60)).padStart(2, '0');
                     const secs = String(remaining % 60).padStart(2, '0');
                     document.getElementById('rest-timer-display').innerText = `${mins}:${secs}`;
+
+                    // Update SVG circular progress ring
+                    const offset = circumference - (remaining / totalRestTime) * circumference;
+                    circle.style.strokeDashoffset = offset;
                 },
                 () => {
                     document.getElementById('rest-modal').classList.add('hidden');
@@ -483,14 +533,14 @@
             const container = document.getElementById('history-container');
 
             if (history.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-sm text-center py-6">No workouts recorded yet. Start a session above!</p>`;
+                container.innerHTML = `<p class="text-slate-500 text-sm text-center py-8">No workouts recorded yet. Start your first session above!</p>`;
                 return;
             }
 
             let html = `
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-700 text-xs text-slate-400 uppercase">
+                        <tr class="border-b border-slate-700/80 text-xs text-slate-400 uppercase tracking-wider">
                             <th class="py-3 px-4">Date</th>
                             <th class="py-3 px-4">Exercise</th>
                             <th class="py-3 px-4">Reps</th>
@@ -498,18 +548,18 @@
                             <th class="py-3 px-4">Duration</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-700 text-sm">
+                    <tbody class="divide-y divide-slate-800 text-sm">
             `;
 
             history.forEach(item => {
                 const dateStr = new Date(item.date).toLocaleString();
                 html += `
-                    <tr class="hover:bg-slate-750 transition-colors">
-                        <td class="py-3 px-4 text-slate-400">${dateStr}</td>
-                        <td class="py-3 px-4 font-semibold text-white">${item.exercise}</td>
-                        <td class="py-3 px-4 text-emerald-400 font-bold">${item.totalReps}</td>
-                        <td class="py-3 px-4 text-slate-300">${item.formAccuracy}%</td>
-                        <td class="py-3 px-4 text-slate-400">${item.durationSeconds}s</td>
+                    <tr class="hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3.5 px-4 text-slate-400 font-medium">${dateStr}</td>
+                        <td class="py-3.5 px-4 font-bold text-white">${item.exercise}</td>
+                        <td class="py-3.5 px-4 text-emerald-400 font-black">${item.totalReps}</td>
+                        <td class="py-3.5 px-4 text-slate-300 font-semibold">${item.formAccuracy}%</td>
+                        <td class="py-3.5 px-4 text-slate-400">${item.durationSeconds}s</td>
                     </tr>
                 `;
             });

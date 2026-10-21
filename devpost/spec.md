@@ -6,21 +6,21 @@ status: approved
 # RepCounter — Technical Spec
 
 ## How This Works, In Plain Language
-RepCounter is a browser-based workout companion that now includes a **Daily Task Routine** workflow.
-- **The Routine Queue Manager:** Manages the sequential flow from Setup -> Exercise 1 (Push-ups) -> 2-Min Rest Timer -> Exercise 2 (Squats) -> 2-Min Rest Timer -> Exercise 3 (Bicep Curls) -> Routine Summary.
-- **The Rest Timer:** A countdown interval timer (02:00) that pauses exercise tracking, displays remaining time, and supports manual skipping.
+RepCounter is a browser-based workout companion featuring a **Modern Glassmorphism UI** and **Interactive Animations** powered by pure CSS and Tailwind CSS.
+- **The Glassmorphism & Neon Design System:** Utilizes translucent panels (`backdrop-blur`), subtle ambient background glows, and glowing focus borders (`neon-input`) for a premium fitness app feel.
+- **Pure CSS Animations:** Smooth screen fade transitions (`view-transition`), exercise card hover scaling (`glass-card`), rep counter pulse animations (`rep-pulse`), and an animated SVG circular progress ring for the rest timer—ensuring butter-smooth 60fps performance even on modest 4GB RAM laptops without heavy JavaScript animation libraries.
+- **The Routine Queue & Rest Timer:** Manages the sequential flow between Daily Task setup, exercises, and the 2-minute countdown rest timer.
 - **The Pose & Angle Engine:** MediaPipe Pose extracts keypoints locally via CDN, while `counter.js` and `rules.js` track Push-ups, Squats, and calibrated Bicep Curls.
-- **Persistence:** Both workout history and Daily Task targets are saved in browser LocalStorage.
 
 ## The Core Journey Through the System
 PRD ref: `prd.md > The Core Journey`.
-1. **Dashboard & Setup:** User opens dashboard, clicks 'Daily Task Routine', configures target reps for the 3 exercises, and saves them.
-2. **Routine Execution:** Clicking 'Start Daily Routine' launches Exercise 1 with webcam pose estimation.
-3. **Auto-Advance & Rest:** Upon reaching target reps, the app triggers the 2-Minute Rest Timer, then auto-advances to the next exercise.
+1. **Dashboard & Setup:** User opens glassmorphic dashboard, clicks 'Daily Task Routine', configures target reps in glowing inputs, and saves them.
+2. **Routine Execution:** Clicking 'Start Daily Routine' triggers fade transition to Exercise 1 with webcam pose estimation and massive pulsing rep counter.
+3. **Auto-Advance & Rest:** Upon reaching target reps, app triggers 2-Minute Rest Timer with animated circular SVG progress ring, then auto-advances.
 4. **Completion:** Final summary saves total routine stats to LocalStorage.
 
 ## Stack
-- Frontend: HTML5, Tailwind CSS (via CDN)
+- Frontend: HTML5, Tailwind CSS (via CDN), Custom CSS (`style.css`)
 - Computer Vision: MediaPipe Pose (@mediapipe/pose, camera_utils, drawing_utils)
 - Scripting: Vanilla JavaScript (ES6 Modules)
 - Persistence: Browser LocalStorage API
@@ -30,12 +30,16 @@ PRD ref: `prd.md > The Core Journey`.
 - Open `http://localhost:8000`
 
 ## Look and Feel
-- Dark mode fitness dashboard aesthetic (`bg-slate-900`, `text-slate-100`, emerald green accents).
-- Large 02:00 countdown timer display during rest periods.
+- **Theme:** Deep dark slate/black (`#030712`) with ambient cyan and purple background gradients.
+- **UI Elements:** Glassmorphism (`backdrop-blur-xl`, semi-transparent backgrounds with subtle borders).
+- **Animations:** Pure CSS transitions, card hover transforms, rep pulsing, and SVG circular progress ring.
 
 ## Components
+### UI & Glassmorphism Theme (`index.html` + `style.css`)
+- Glassmorphic panels, glowing inputs, screen fade transitions, and massive pulsing rep counter HUD.
+
 ### Daily Task Setup & Routine Manager (`index.html` + `src/routine.js`)
-- Manages routine target inputs, persistence, queue progression, and rest timer countdown.
+- Manages routine target inputs, persistence, queue progression, and circular progress ring rest timer.
 
 ### Pose & Counting Engine (`src/pose.js`, `src/counter.js`, `src/rules.js`)
 - Handles MediaPipe camera stream, keypoint angle math, state machine rep counting, and calibrated Bicep Curl tracking.
@@ -44,13 +48,13 @@ PRD ref: `prd.md > The Core Journey`.
 ```
 RepCounter/
 ├── index.html
-├── style.css
+├── style.css               # Contains glassmorphism, glowing effects, circular progress ring, and fade animations
 ├── src/
 │   ├── pose.js
 │   ├── counter.js
 │   ├── rules.js
 │   ├── storage.js
-│   └── routine.js          # New: Daily task routine queue and rest timer logic
+│   └── routine.js
 ├── tests/
 │   └── test.html
 ├── README.md
@@ -66,4 +70,4 @@ RepCounter/
 - **Target reps 0** → Prompts user to set targets before starting routine.
 
 ## What Was Simplified and Why
-- Local storage for targets and history avoids backend databases.
+- Pure CSS animations instead of GSAP or heavy JS libraries to guarantee smooth performance on 4GB RAM hardware.

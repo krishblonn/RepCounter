@@ -6,7 +6,7 @@
     <title>RepCounter — AI Workout Companion</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- MediaPipe CDN scripts for later slices -->
+    <!-- MediaPipe CDN scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
@@ -103,13 +103,13 @@
 
             <!-- Video & HUD Container -->
             <div class="relative bg-black rounded-xl overflow-hidden border border-slate-700 shadow-2xl aspect-video flex items-center justify-center">
-                <!-- Webcam Video (Hidden element processed by MediaPipe) -->
+                <!-- Webcam Video Element -->
                 <video id="webcam" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100" playsinline></video>
                 <!-- Canvas Overlay for Skeleton & HUD -->
                 <canvas id="output-canvas" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100"></canvas>
 
                 <!-- HUD Overlay Top-Right: Rep Counter -->
-                <div class="absolute top-6 right-6 bg-slate-900/80 backdrop-blur border border-slate-700 px-6 py-4 rounded-xl shadow-xl flex items-center space-x-6">
+                <div class="absolute top-6 right-6 bg-slate-900/80 backdrop-blur border border-slate-700 px-6 py-4 rounded-xl shadow-xl flex items-center space-x-6 z-10">
                     <div>
                         <div class="text-xs text-slate-400 uppercase font-semibold">Total Reps</div>
                         <div id="hud-rep-count" class="text-4xl font-extrabold text-emerald-400">0</div>
@@ -120,10 +120,17 @@
                     </div>
                 </div>
 
-                <!-- Placeholder state before MediaPipe loads in slice 2 -->
-                <div id="workout-loading" class="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center space-y-4">
+                <!-- Error Warning Overlay (Hidden by default) -->
+                <div id="warning-overlay" class="absolute inset-0 bg-red-950/80 backdrop-blur-md hidden flex flex-col items-center justify-center space-y-4 z-20 px-4 text-center">
+                    <svg class="w-16 h-16 text-red-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <h3 id="warning-title" class="text-2xl font-bold text-white">Tracking Paused</h3>
+                    <p id="warning-message" class="text-red-200 max-w-md text-sm">Please adjust lighting or step fully into the camera frame.</p>
+                </div>
+
+                <!-- Loading state -->
+                <div id="workout-loading" class="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center space-y-4 z-30">
                     <div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-slate-300 font-medium">Initializing camera & pose engine...</p>
+                    <p class="text-slate-300 font-medium">Initializing MediaPipe Pose Engine...</p>
                 </div>
             </div>
         </div>
@@ -138,33 +145,76 @@
     <!-- Script Module -->
     <script type="module">
         import { getWorkoutHistory, saveWorkoutSet, clearWorkoutHistory } from './src/storage.js';
+        import { PoseTracker } from './src/pose.js';
 
-        // Expose helper functions to global scope for inline onclick handlers
-        window.startWorkout = function(exerciseType) {
+        let poseTracker = null;
+        let currentExercise = '';
+        let sessionStartTime = null;
+
+        window.startWorkout = async function(exerciseType) {
+            currentExercise = exerciseType;
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('workout-view').classList.remove('hidden');
             document.getElementById('active-exercise-name').innerText = exerciseType.toUpperCase();
+            document.getElementById('hud-rep-count').innerText = '0';
+            document.getElementById('hud-form-status').innerText = 'Good';
 
-            // For Slice 1 testing, simulate loading completion after 1 second
-            setTimeout(() => {
+            sessionStartTime = Date.now();
+
+            const videoElement = document.getElementById('webcam');
+            const canvasElement = document.getElementById('output-canvas');
+
+            try {
+                poseTracker = new PoseTracker(
+                    videoElement,
+                    canvasElement,
+                    (landmarks) => {
+                        // Keypoint results callback (will be used in slice 3)
+                    },
+                    (isError, message) => {
+                        const warningOverlay = document.getElementById('warning-overlay');
+                        const warningMsg = document.getElementById('warning-message');
+                        if (isError) {
+                            warningMsg.innerText = message;
+                            warningOverlay.classList.remove('hidden');
+                        } else {
+                            warningOverlay.classList.add('hidden');
+                        }
+                    }
+                );
+
+                await poseTracker.init();
+
                 const loadingEl = document.getElementById('workout-loading');
                 if (loadingEl) loadingEl.classList.add('hidden');
-            }, 1000);
+            } catch (e) {
+                console.error("Failed to start pose tracker:", e);
+                alert("Could not start webcam or MediaPipe Pose. Please ensure camera permissions are allowed.");
+                stopWorkout();
+            }
         };
 
         window.stopWorkout = function() {
-            // Save mock set for slice 1 testing
-            const saved = saveWorkoutSet({
-                exercise: document.getElementById('active-exercise-name').innerText,
-                totalReps: 10,
-                goodReps: 9,
-                badReps: 1,
-                formAccuracy: 90,
-                durationSeconds: 30
+            if (poseTracker) {
+                poseTracker.stop();
+                poseTracker = null;
+            }
+
+            const durationSeconds = sessionStartTime ? Math.round((Date.now() - sessionStartTime) / 1000) : 10;
+
+            // Save set data
+            saveWorkoutSet({
+                exercise: currentExercise.toUpperCase(),
+                totalReps: parseInt(document.getElementById('hud-rep-count').innerText) || 0,
+                goodReps: 0,
+                badReps: 0,
+                formAccuracy: 100,
+                durationSeconds: durationSeconds
             });
 
             document.getElementById('workout-view').classList.add('hidden');
             document.getElementById('dashboard-view').classList.remove('hidden');
+            document.getElementById('workout-loading').classList.remove('hidden');
             loadHistoryUI();
         };
 
@@ -213,7 +263,6 @@
             container.innerHTML = html;
         }
 
-        // Initialize history table on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadHistoryUI();
         });

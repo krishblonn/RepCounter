@@ -9,7 +9,7 @@ Build mode: learn
 
 ## Slices
 
-- [ ] **1. Dashboard, Exercise Selection & Storage Foundation**
+- [x] **1. Dashboard, Exercise Selection & Storage Foundation**
   Becomes usable: The home dashboard opens with exercise selection cards (Push-ups, Squats, Bicep Curls) and loads/saves workout history from/to browser LocalStorage. Clicking an exercise opens the active workout placeholder.
   Why now: Establishes the project scaffold, Tailwind UI, local storage model, and main navigation loop.
   PRD ref: `prd.md > The Core Journey` (steps 1, 2, 6), `prd.md > Screens and Layout` (Dashboard & History).
@@ -19,7 +19,7 @@ Build mode: learn
   Learner check: Open the dashboard, view history, and confirm the layout feels like a clean dark mode fitness app.
   Commit: `Add dashboard UI, exercise cards, history, and storage module`
 
-- [ ] **2. MediaPipe Pose Integration, Skeleton Overlay & Error Handling**
+- [x] **2. MediaPipe Pose Integration, Skeleton Overlay & Error Handling**
   Becomes usable: Selecting an exercise starts the webcam, loads MediaPipe Pose via CDN, renders the live video feed with the skeleton canvas overlay, and pauses with a warning popup if illumination is poor or person is missing.
   Why now: Proves the core vision engine and robust error handling early before building counting logic.
   PRD ref: `prd.md > The Core Journey` (steps 2, 4), `prd.md > Features and Behavior` (Live Pose Tracking, Error Handling).
@@ -51,7 +51,7 @@ Build mode: learn
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — Slice 2 (Live camera feed & skeleton overlay)
+- [x] Early usable behavior explored — Slice 2 (Live camera feed & skeleton overlay)
 - [ ] Final kick-the-tires exploration and feedback completed — Slice 4
 
 ## Final Review

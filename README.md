@@ -71,8 +71,8 @@ To run RepCounter locally on your laptop:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/RepCounter.git
-   cd RepCounter
+   #git clone https://github.com/your-username/RepCounter.git
+   #cd RepCounter
    ```
 2. **Start a local static web server:**
    ```bash

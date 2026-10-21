@@ -39,7 +39,7 @@ Build mode: learn
   Learner check: Perform a few test reps (e.g. squats or bicep curls) in front of the camera and watch the live rep counter and form indicator update.
   Commit: `Implement angle math, state machine rep counter, and form rules`
 
-- [ ] **4. Set Summary Modal, Stop Action & End-to-End Polish**
+- [x] **4. Set Summary Modal, Stop Action & End-to-End Polish**
   Becomes usable: Clicking the "Stop" button ends the workout, computes total/good/bad reps and elapsed time, displays the Set Summary modal, and saves the set to history. Plus unit test suite and README documentation.
   Why now: Completes the full core journey loop and ensures documentation and tests are solid.
   PRD ref: `prd.md > The Core Journey` (steps 5, 6), `prd.md > Screens and Layout` (Set Summary Modal).
@@ -52,22 +52,22 @@ Build mode: learn
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — Slice 2 (Live camera feed & skeleton overlay)
-- [ ] Final kick-the-tires exploration and feedback completed — Slice 4
+- [x] Final kick-the-tires exploration and feedback completed — Slice 4
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [pending]
-Route and stops: [pending]
-Edit outcome: [pending]
-Reflection: [pending]
-Activity mode: [pending]
+Activity and evidence: Explored angle math and state machine implementation in `src/counter.js` and MediaPipe video loop in `src/pose.js`.
+Route and stops: `src/counter.js` -> `src/pose.js` -> `index.html`
+Edit outcome: Verified working angle calculation and rep counting tests.
+Reflection: Discussed client-side pose estimation and state machines.
+Activity mode: Live code walkthrough.
 
 ## Revisions

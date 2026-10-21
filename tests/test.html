@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepCounter — Unit Tests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-8 font-sans">
+    <div class="max-w-2xl mx-auto space-y-6">
+        <h1 class="text-3xl font-bold text-emerald-400">RepCounter Unit Tests</h1>
+        <p class="text-slate-400">Testing angle calculations and state machine rep counting logic.</p>
+
+        <div id="test-results" class="bg-slate-800 border border-slate-700 rounded-xl p-6 space-y-4 font-mono text-sm">
+            <p class="text-yellow-400">Running tests...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { calculateAngle, RepCounterMachine } from '../src/counter.js';
+
+        const resultsEl = document.getElementById('test-results');
+        let output = '';
+
+        function assert(condition, message) {
+            if (!condition) {
+                throw new Error(`Assertion failed: ${message}`);
+            }
+        }
+
+        try {
+            // Test 1: Angle calculation (Right angle triangle 90 degrees)
+            const a = { x: 0, y: 1 };
+            const b = { x: 0, y: 0 }; // vertex
+            const c = { x: 1, y: 0 };
+            const angle90 = calculateAngle(a, b, c);
+            assert(Math.abs(angle90 - 90) < 0.1, `Expected 90 degrees, got ${angle90}`);
+            output += `<div class="text-emerald-400">✓ calculateAngle (90 degrees) passed</div>`;
+
+            // Test 2: State machine rep counting sequence
+            // Config: upThreshold >= 160, downThreshold <= 90
+            const machine = new RepCounterMachine({ upThreshold: 160, downThreshold: 90 });
+
+            // Initial state: up, 0 reps
+            let res = machine.update(170);
+            assert(res.reps === 0, 'Should start at 0 reps');
+
+            // Move down (angle <= 90)
+            machine.update(150);
+            machine.update(100);
+            res = machine.update(80); // reaches down state
+
+            // Return up (angle >= 160)
+            machine.update(120);
+            machine.update(150);
+            res = machine.update(165); // completes rep
+
+            assert(res.repCompleted === true && res.reps === 1, `Expected 1 rep completed, got ${res.reps}`);
+            output += `<div class="text-emerald-400">✓ RepCounterMachine state machine rep counting passed</div>`;
+
+            resultsEl.innerHTML = output;
+        } catch (e) {
+            output += `<div class="text-red-400 font-bold">✗ Test failed: ${e.message}</div>`;
+            resultsEl.innerHTML = output;
+        }
+    </script>
+</body>
+</html>

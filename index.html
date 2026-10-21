@@ -146,16 +146,30 @@
     <script type="module">
         import { getWorkoutHistory, saveWorkoutSet, clearWorkoutHistory } from './src/storage.js';
         import { PoseTracker } from './src/pose.js';
+        import { calculateAngle, RepCounterMachine } from './src/counter.js';
+        import { EXERCISE_CONFIGS } from './src/rules.js';
 
         let poseTracker = null;
         let currentExercise = '';
         let sessionStartTime = null;
+        let repCounter = null;
+        let goodRepsCount = 0;
+        let badRepsCount = 0;
 
         window.startWorkout = async function(exerciseType) {
             currentExercise = exerciseType;
+            const config = EXERCISE_CONFIGS[exerciseType] || EXERCISE_CONFIGS.pushups;
+
+            repCounter = new RepCounterMachine({
+                upThreshold: config.upThreshold,
+                downThreshold: config.downThreshold
+            });
+            goodRepsCount = 0;
+            badRepsCount = 0;
+
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('workout-view').classList.remove('hidden');
-            document.getElementById('active-exercise-name').innerText = exerciseType.toUpperCase();
+            document.getElementById('active-exercise-name').innerText = config.name;
             document.getElementById('hud-rep-count').innerText = '0';
             document.getElementById('hud-form-status').innerText = 'Good';
 
@@ -169,7 +183,26 @@
                     videoElement,
                     canvasElement,
                     (landmarks) => {
-                        // Keypoint results callback (will be used in slice 3)
+                        const joints = config.getJoints(landmarks);
+                        if (joints[0] && joints[1] && joints[2]) {
+                            const angle = calculateAngle(joints[0], joints[1], joints[2]);
+                            const result = repCounter.update(angle);
+
+                            if (result.repCompleted) {
+                                document.getElementById('hud-rep-count').innerText = result.reps;
+                            }
+
+                            // Check form rules
+                            const formResult = config.checkForm(landmarks);
+                            const formStatusEl = document.getElementById('hud-form-status');
+                            if (formResult.isGood) {
+                                formStatusEl.innerText = 'Good';
+                                formStatusEl.className = 'text-lg font-bold text-emerald-400';
+                            } else {
+                                formStatusEl.innerText = formResult.message;
+                                formStatusEl.className = 'text-lg font-bold text-yellow-400';
+                            }
+                        }
                     },
                     (isError, message) => {
                         const warningOverlay = document.getElementById('warning-overlay');
@@ -200,15 +233,16 @@
                 poseTracker = null;
             }
 
+            const totalReps = repCounter ? repCounter.reps : 0;
             const durationSeconds = sessionStartTime ? Math.round((Date.now() - sessionStartTime) / 1000) : 10;
 
             // Save set data
             saveWorkoutSet({
-                exercise: currentExercise.toUpperCase(),
-                totalReps: parseInt(document.getElementById('hud-rep-count').innerText) || 0,
-                goodReps: 0,
+                exercise: document.getElementById('active-exercise-name').innerText,
+                totalReps: totalReps,
+                goodReps: totalReps,
                 badReps: 0,
-                formAccuracy: 100,
+                formAccuracy: totalReps > 0 ? 100 : 0,
                 durationSeconds: durationSeconds
             });
 

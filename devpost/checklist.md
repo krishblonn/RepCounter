@@ -29,7 +29,7 @@ Build mode: learn
   Learner check: Open active workout, see yourself with the live skeleton overlay, and test covering the camera to see the warning popup.
   Commit: `Integrate MediaPipe Pose, skeleton canvas overlay, and error warnings`
 
-- [ ] **3. Joint Angle Calculations, State Machine Rep Counting & Form Rules**
+- [x] **3. Joint Angle Calculations, State Machine Rep Counting & Form Rules**
   Becomes usable: Performing reps (Push-ups, Squats, Bicep Curls) in front of the webcam calculates joint angles, smooths readings, updates the finite state machine, increments the live rep counter, and shows real-time form warnings.
   Why now: Delivers the unique kernel of the app—accurate rep counting and posture checking.
   PRD ref: `prd.md > The Core Journey` (step 3), `prd.md > Features and Behavior` (Live Pose Tracking, Real-Time Form Checking).

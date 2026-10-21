@@ -5,88 +5,76 @@ status: approved
 
 # RepCounter — Product Requirements
 
-A browser-based exercise rep counter and form checker using webcam pose estimation, built for fitness enthusiasts and home workout practitioners.
+A browser-based exercise rep counter, form checker, and **Daily Task Routine** system using webcam pose estimation.
 Source: `scope.md > The Unique Kernel`, `scope.md > Who It's For`.
 
 ## The Core Journey
 Source: `scope.md > The Core Loop`, `scope.md > What "Working" Looks Like`.
-1. **Arrival & Dashboard:** The user opens the web app in their browser and lands on a clean home screen showing a selection menu of available exercises (Push-ups, Squats, Bicep Curls) and past workout history.
-2. **Exercise Selection & Startup:** The user clicks an exercise (e.g., Push-ups). The app transitions to the active workout screen and requests webcam access.
-3. **Active Workout & Tracking:** The webcam feed loads with a live MediaPipe skeleton overlay. As the user performs reps, the state machine tracks joint angles, increments the live rep counter, and displays real-time form status (green/yellow/red).
-4. **Error Handling:** If lighting is poor or no person is detected, the camera feed pauses and a clear descriptive popup alerts the user. Once adjusted, the popup disappears automatically and tracking resumes.
-5. **Set Completion:** The user clicks the large "Stop" button. The workout ends, and a summary popup displays total reps, good-form reps, bad-form reps, and time taken.
-6. **Persistence & Review:** The set data is automatically saved to browser local storage, updating the history list on the dashboard.
+1. **Arrival & Dashboard:** The user opens the web app and sees options for individual exercise mode or the new **'Daily Task Routine'**.
+2. **Daily Task Setup:** Clicking 'Daily Task Routine' opens a setup screen where target rep counts for Push-ups, Squats, and Bicep Curls can be inputted and saved to browser local storage.
+3. **Routine Sequence & Auto-Advance:** Starting the routine launches the first exercise in the queue with the webcam and MediaPipe pose estimation. Once target reps are reached, the app automatically pauses, triggers a **2-Minute Rest Timer** (with a 'Skip Rest' button), and automatically advances to the next exercise upon completion.
+4. **Routine Completion:** After all queued exercises finish, a final routine summary screen appears showing total reps and duration, saving the session into history.
 
 ## Screens and Layout
-1. **Home / Dashboard Screen:** Clean dark mode header, exercise selection cards/buttons, and a past workout history list.
-2. **Active Workout Screen:** Full-screen video feed with canvas overlay for the skeleton tracker, top HUD displaying current exercise, large rep counter, form status indicator (green/yellow/red), and a prominent "Stop" button.
-3. **Set Summary Modal:** Popup overlay showing set statistics (total reps, good vs. bad form breakdown, duration) with a "Back to Dashboard" button.
-4. **Error / Warning Overlay:** Modal/banner overlay appearing over the video feed when tracking conditions fail (e.g., "Person not detected" or "Poor lighting").
+1. **Home / Dashboard Screen:** Clean dark mode header, individual exercise cards, past workout history, and a prominent **'Daily Task Routine'** launcher button.
+2. **Daily Task Setup Modal / Screen:** Interface to input target rep counts for Push-ups, Squats, and Bicep Curls, saving preferences locally.
+3. **Active Workout / Routine Screen:** Full-screen video feed with skeleton overlay, HUD displaying current exercise in queue, target reps vs. current reps, live form status, and a 'Stop Routine' button.
+4. **Rest Timer Screen:** Full-screen or modal overlay showing a prominent 2-minute countdown timer (02:00) with a 'Skip Rest' button.
+5. **Routine Summary Modal:** Popup showing total completed routine stats and score.
 
 ## Look and Feel
 - **Style:** Dark mode fitness dashboard aesthetic.
 - **Colors & Indicators:** High-contrast light green active indicators, green/yellow/red color coding for form feedback and status.
-- **Typography & HUD:** Clean, large, legible numbers and text designed to be easily read from a distance while exercising.
+- **Timers & HUD:** Large, legible countdown timer and progress indicators.
 
 ## Features and Behavior
 
-### Exercise Selection & Dashboard
-- Displays card options for Push-ups, Squats, and Bicep curls.
-- Lists past saved workout sets retrieved from browser local storage.
-  - [ ] Clicking an exercise card starts the webcam and opens the active workout screen.
-  - [ ] History list persists across browser refreshes and displays date, exercise name, total reps, and form accuracy percentage.
+### Daily Task Routine & Persistence
+- Allows users to configure target reps for Push-ups, Squats, and Bicep Curls.
+- Automatically loads previously saved targets from `localStorage`.
+  - [ ] Setup screen correctly saves and loads targets across page refreshes.
 
-### Live Pose Tracking & Rep Counting
-- Integrates browser-based MediaPipe Pose to extract body keypoints.
-- Calculates joint angles (elbow for push-ups/curls, knee/hip for squats).
-- Implements a finite state machine ("up" / "down") with temporal smoothing (moving average over recent frames) to prevent jitter and double counting.
-  - [ ] Skeleton overlay accurately draws joints and connecting lines on the live video feed.
-  - [ ] Rep counter increments precisely when a full cycle (down threshold followed by up return) is completed.
+### Routine Queue & Auto-Advance Logic
+- Automatically sequences Push-ups -> Squats -> Bicep Curls based on target completion.
+  - [ ] When target reps for exercise 1 are reached, tracking pauses and the rest timer starts automatically.
 
-### Real-Time Form Checking & Error Handling
-- Evaluates posture rules per exercise (e.g., back straight, knees inward, arm swing).
-- Shows live form feedback indicator (green for good, yellow/red for warnings).
-- Pauses tracking and displays a descriptive popup if person is lost or lighting is inadequate.
-  - [ ] Warning popup appears immediately upon tracking failure and dismisses automatically when conditions normalize.
-  - [ ] Form score percentage is tracked per set.
+### 2-Minute Rest Timer
+- Large 02:00 countdown timer between exercises.
+- 'Skip Rest' button to instantly proceed to the next exercise.
+  - [ ] Timer counts down every second and auto-advances when hitting 00:00 or when clicked.
 
-### Set Summary & Storage
-- Captures set statistics upon clicking "Stop".
-  - [ ] Summary modal displays total reps, good-form rep count, bad-form rep count, and elapsed time.
-  - [ ] Data is saved to browser local storage.
+### Pose Tracking & Bicep Curl Accuracy
+- Accurate joint angle calculations for Push-ups, Squats, and Bicep Curls (including fully calibrated Bicep Curl angle tracking with elbow flexion).
+  - [ ] Rep counter increments precisely on full cycles.
 
 ## States and Boundaries
-- **First Use:** Dashboard shows no past workout history; exercise selection is fully available.
-- **Normal Use:** Active workout tracks reps and displays live skeleton overlay.
-- **Error State (Poor Lighting / No Person):** Camera tracking pauses, video feed shows warning popup with specific issue; resumes automatically when resolved.
-- **Set Completion State:** Summary modal interrupts workout view until user returns to dashboard.
-- **Persistence:** Set history persists in browser local storage across page refreshes.
+- **First Use:** Default targets loaded; user can configure their custom daily routine.
+- **Active Exercise State:** Live webcam tracking and rep counting.
+- **Rest State:** Camera paused, countdown timer active.
+- **Completion State:** Routine summary saved to local storage.
 
 ## Product Decisions
-- **Browser Local Storage:** Chosen for data persistence so no backend server or user authentication is required, keeping the proof of concept simple and self-contained.
-- **Client-Side MediaPipe:** Chosen for zero paid API keys, zero latency, and complete privacy (video never leaves the device).
-- **Dark Mode Fitness HUD:** High-contrast light green indicators chosen for visibility during active movement.
+- **Browser Local Storage:** Used for routine targets and history persistence.
+- **Client-Side MediaPipe:** Zero server upload, complete privacy.
 
 ## What We're Building
-- Browser-based UI with Dashboard, Active Workout view, Summary modal, and Warning overlay.
-- MediaPipe Pose integration with skeleton canvas rendering.
-- Config-driven rep counting for Push-ups, Squats, and Bicep curls using finite state machines and angle smoothing.
-- Real-time form rule checks and posture warnings.
-- Local storage persistence for set history.
-- Unit tests for angle calculation and state machine logic.
+- Dashboard with Daily Task Routine launcher and Setup modal.
+- Routine queue runner with auto-advance logic.
+- 2-Minute Rest Timer with Skip button.
+- Calibrated Push-ups, Squats, and Bicep Curls tracking.
+- Routine summary and local history persistence.
+- Unit tests for auto-advance routine logic and localStorage targets.
 
 ## Deferred From the POC
-- Cloud user authentication and database sync across devices.
-- Audio cue sounds for form warnings.
-- Custom exercise configuration creator UI.
+- Cloud user authentication.
+- Audio beeps for rest timer.
 
 ## Possible Later Enhancements
-- Multi-person tracking and auto-person selection.
-- Advanced analytics charts for historical progress tracking.
+- Custom exercise addition.
 
 ## Non-Goals
-- Professional physical therapy diagnosis or medical-grade posture analysis.
-- Mobile native app distribution (browser-only MVP).
+- Medical-grade diagnosis.
+- Mobile native apps.
 
 ## Open Questions
-- None. All requirements and behaviors are fully defined.
+- None.

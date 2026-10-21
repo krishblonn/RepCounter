@@ -1,13 +1,14 @@
-# RepCounter
+# RepCounter & Daily Task Routine
 
-A browser-based exercise rep counter and form checker using webcam pose estimation and MediaPipe. Built as a proof of concept with zero backend servers and 100% client-side privacy.
+A browser-based exercise rep counter, form checker, and structured **Daily Task Routine** system using webcam pose estimation and MediaPipe. Built as a proof of concept with zero backend servers and 100% client-side privacy.
 
 ## Features
-- **Real-Time Pose Tracking:** Uses MediaPipe Pose running locally in the browser to detect body keypoints via webcam.
-- **Config-Driven Exercises:** Supports Push-ups, Squats, and Bicep Curls with custom angle thresholds and posture rules.
+- **Daily Task Routine:** Configure custom target reps for Push-ups, Squats, and Bicep Curls with automatic persistence in browser LocalStorage.
+- **Auto-Advance & 2-Minute Rest Timers:** Automatically transitions from exercise to rest period upon hitting target reps, complete with a countdown timer and a 'Skip Rest' button.
+- **Real-Time Pose Tracking:** Uses MediaPipe Pose running locally in the browser to detect body keypoints via webcam with zero video upload.
+- **Calibrated Exercise Support:** Supports Push-ups, Squats, and fully calibrated Bicep Curls with custom angle thresholds and posture checks.
 - **Finite State Machine Rep Counting:** Accurate counting using "up" and "down" states with temporal smoothing (moving average) to eliminate jitter and double-counting.
-- **Posture & Form Feedback:** Real-time form checks (e.g. back straightness) and automated warning overlays when lighting is poor or the user steps out of frame.
-- **Workout History:** Automatically saves set summaries to browser LocalStorage.
+- **Workout & Routine History:** Automatically saves set and routine summaries to browser LocalStorage.
 
 ## Prerequisites
 - A modern web browser (Chrome, Firefox, Edge, Safari) with webcam support.
@@ -26,7 +27,7 @@ To run the app locally:
    ```
 
 ## Running Unit Tests
-To run the test suite for angle calculations and the rep counting state machine:
+To run the test suite for angle calculations, state machine rep counting, and routine queue progression:
 - Open `http://localhost:8000/tests/test.html` in your browser.
 
 ## How Rep Counting Works

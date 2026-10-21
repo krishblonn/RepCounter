@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RepCounter — AI Workout Companion</title>
+    <title>RepCounter — AI Workout Companion & Daily Task Routine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <!-- MediaPipe CDN scripts -->
@@ -17,7 +17,7 @@
     <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 flex justify-between items-center shadow-lg">
         <div class="flex items-center space-x-3">
             <div class="w-4 h-4 rounded-full bg-emerald-500 animate-pulse"></div>
-            <h1 class="text-xl font-bold tracking-wider text-emerald-400">RepCounter<span class="text-xs ml-2 px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 font-normal">PoC</span></h1>
+            <h1 class="text-xl font-bold tracking-wider text-emerald-400">RepCounter<span class="text-xs ml-2 px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 font-normal">Daily Routine PoC</span></h1>
         </div>
         <div class="flex items-center space-x-4">
             <a href="tests/test.html" target="_blank" class="text-xs text-slate-400 hover:text-emerald-400 transition-colors underline">Run Unit Tests</a>
@@ -30,48 +30,54 @@
 
         <!-- VIEW 1: Dashboard -->
         <div id="dashboard-view" class="space-y-8">
-            <div class="text-center space-y-2">
-                <h2 class="text-3xl font-extrabold text-white tracking-tight">Select an Exercise</h2>
-                <p class="text-slate-400 max-w-xl mx-auto">Position your webcam, select your movement, and get real-time rep counting and posture feedback with zero server uploads.</p>
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-extrabold text-white tracking-tight">Your AI Fitness Companion</h2>
+                <p class="text-slate-400 max-w-xl mx-auto">Choose an individual exercise or start your structured Daily Task Routine with automated rest timers and rep progression.</p>
+
+                <!-- Daily Task Routine Launch Button -->
+                <button onclick="openDailyTaskSetup()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold px-8 py-4 rounded-2xl shadow-xl shadow-emerald-900/40 text-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-3 mx-auto">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Start Daily Task Routine</span>
+                </button>
             </div>
 
             <!-- Exercise Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                 <!-- Push-ups Card -->
-                <div onclick="startWorkout('pushups')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                <div onclick="startSingleWorkout('pushups')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
                     <div>
                         <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Upper Body</div>
                         <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Push-ups</h3>
                         <p class="text-slate-400 text-sm mt-2">Elbow bend to 90°, back straightness posture checks.</p>
                     </div>
                     <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
-                        <span>Start Workout</span>
+                        <span>Practice Solo</span>
                         <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
 
                 <!-- Squats Card -->
-                <div onclick="startWorkout('squats')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                <div onclick="startSingleWorkout('squats')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
                     <div>
                         <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Lower Body</div>
                         <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Squats</h3>
                         <p class="text-slate-400 text-sm mt-2">Hips below knee level, chest up, knees out.</p>
                     </div>
                     <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
-                        <span>Start Workout</span>
+                        <span>Practice Solo</span>
                         <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
 
                 <!-- Bicep Curls Card -->
-                <div onclick="startWorkout('curls')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
+                <div onclick="startSingleWorkout('curls')" class="bg-slate-800 border border-slate-700 hover:border-emerald-500 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/20 group flex flex-col justify-between">
                     <div>
                         <div class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-1">Arms</div>
                         <h3 class="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors">Bicep Curls</h3>
                         <p class="text-slate-400 text-sm mt-2">Elbow flexion, upper arm stability checks.</p>
                     </div>
                     <div class="mt-6 flex items-center justify-between text-emerald-400 font-medium text-sm">
-                        <span>Start Workout</span>
+                        <span>Practice Solo</span>
                         <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </div>
                 </div>
@@ -80,7 +86,7 @@
             <!-- Workout History Section -->
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-md mt-10">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-white">Workout History</h3>
+                    <h3 class="text-xl font-bold text-white">Workout & Routine History</h3>
                     <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition-colors">Clear History</button>
                 </div>
                 <div id="history-container" class="overflow-x-auto">
@@ -94,11 +100,11 @@
             <div class="flex justify-between items-center bg-slate-800 border border-slate-700 rounded-xl px-6 py-4">
                 <div>
                     <span id="active-exercise-name" class="text-emerald-400 text-sm uppercase font-bold tracking-wider">Exercise</span>
-                    <h3 class="text-2xl font-extrabold text-white">Active Workout Session</h3>
+                    <h3 id="active-session-title" class="text-2xl font-extrabold text-white">Active Workout Session</h3>
                 </div>
                 <button onclick="stopWorkout()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg shadow-md transition-colors flex items-center space-x-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    <span>Stop Workout</span>
+                    <span>End Session</span>
                 </button>
             </div>
 
@@ -109,11 +115,11 @@
                 <!-- Canvas Overlay for Skeleton & HUD -->
                 <canvas id="output-canvas" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100"></canvas>
 
-                <!-- HUD Overlay Top-Right: Rep Counter -->
+                <!-- HUD Overlay Top-Right: Rep Counter & Target -->
                 <div class="absolute top-6 right-6 bg-slate-900/80 backdrop-blur border border-slate-700 px-6 py-4 rounded-xl shadow-xl flex items-center space-x-6 z-10">
                     <div>
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Total Reps</div>
-                        <div id="hud-rep-count" class="text-4xl font-extrabold text-emerald-400">0</div>
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Reps / Target</div>
+                        <div class="text-3xl font-extrabold text-emerald-400"><span id="hud-rep-count">0</span><span id="hud-target-display" class="text-slate-500 text-xl font-normal"></span></div>
                     </div>
                     <div class="border-l border-slate-700 pl-6">
                         <div class="text-xs text-slate-400 uppercase font-semibold">Form Status</div>
@@ -138,15 +144,62 @@
 
     </main>
 
-    <!-- Set Summary Modal (Hidden by default) -->
+    <!-- Daily Task Setup Modal -->
+    <div id="setup-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <h3 class="text-2xl font-bold text-white">Daily Task Routine Setup</h3>
+                <p class="text-slate-400 text-sm">Configure your target reps for today's workout. Your targets are automatically saved for next time.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Push-ups Target Reps</label>
+                    <input id="target-pushups" type="number" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" value="10">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Squats Target Reps</label>
+                    <input id="target-squats" type="number" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" value="10">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-300 mb-1">Bicep Curls Target Reps</label>
+                    <input id="target-curls" type="number" min="1" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" value="10">
+                </div>
+            </div>
+
+            <div class="flex space-x-3">
+                <button onclick="closeDailyTaskSetup()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 rounded-xl transition-colors">Cancel</button>
+                <button onclick="startDailyRoutine()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">Start Routine</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest Timer Overlay (Hidden by default) -->
+    <div id="rest-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-10 max-w-lg w-full shadow-2xl text-center space-y-6">
+            <div class="text-emerald-400 font-semibold uppercase tracking-wider text-sm">Rest Period</div>
+            <h3 class="text-3xl font-extrabold text-white">Catch Your Breath</h3>
+
+            <!-- Large Countdown Timer -->
+            <div id="rest-timer-display" class="text-7xl font-black text-emerald-400 tracking-wider my-6">02:00</div>
+
+            <p class="text-slate-400 text-sm">Next Exercise: <span id="rest-next-exercise" class="text-white font-bold">Squats</span></p>
+
+            <button onclick="skipRestTimer()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg text-lg transition-colors">
+                Skip Rest & Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Set Summary / Routine Summary Modal -->
     <div id="summary-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 max-w-md w-full shadow-2xl space-y-6">
             <div class="text-center space-y-2">
                 <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 </div>
-                <h3 class="text-2xl font-bold text-white">Workout Complete!</h3>
-                <p id="summary-exercise-subtitle" class="text-emerald-400 text-sm font-semibold uppercase">Push-ups Set</p>
+                <h3 id="summary-title" class="text-2xl font-bold text-white">Workout Complete!</h3>
+                <p id="summary-exercise-subtitle" class="text-emerald-400 text-sm font-semibold uppercase">Set Summary</p>
             </div>
 
             <!-- Stats Grid -->
@@ -182,16 +235,84 @@
         import { PoseTracker } from './src/pose.js';
         import { calculateAngle, RepCounterMachine } from './src/counter.js';
         import { EXERCISE_CONFIGS } from './src/rules.js';
+        import { getDailyTargets, saveDailyTargets, RoutineManager, RestTimer } from './src/routine.js';
 
         let poseTracker = null;
-        let currentExercise = '';
+        let isRoutineMode = false;
+        let routineManager = null;
+        let restTimer = null;
+        let currentExerciseKey = '';
+        let targetReps = 0;
         let sessionStartTime = null;
         let repCounter = null;
-        let lastSavedSet = null;
+        let lastSummaryData = null;
 
-        window.startWorkout = async function(exerciseType) {
-            currentExercise = exerciseType;
-            const config = EXERCISE_CONFIGS[exerciseType] || EXERCISE_CONFIGS.pushups;
+        // Setup Modal Handlers
+        window.openDailyTaskSetup = function() {
+            const targets = getDailyTargets();
+            document.getElementById('target-pushups').value = targets.pushups;
+            document.getElementById('target-squats').value = targets.squats;
+            document.getElementById('target-curls').value = targets.curls;
+            document.getElementById('setup-modal').classList.remove('hidden');
+        };
+
+        window.closeDailyTaskSetup = function() {
+            document.getElementById('setup-modal').classList.add('hidden');
+        };
+
+        window.startDailyRoutine = function() {
+            const pushups = parseInt(document.getElementById('target-pushups').value) || 10;
+            const squats = parseInt(document.getElementById('target-squats').value) || 10;
+            const curls = parseInt(document.getElementById('target-curls').value) || 10;
+
+            const targets = { pushups, squats, curls };
+            saveDailyTargets(targets);
+            closeDailyTaskSetup();
+
+            isRoutineMode = true;
+            routineManager = new RoutineManager(targets);
+            runNextRoutineExercise();
+        };
+
+        function runNextRoutineExercise() {
+            if (routineManager.isComplete()) {
+                // Routine finished!
+                isRoutineMode = false;
+                const summary = routineManager.getTotalSummary();
+
+                lastSummaryData = saveWorkoutSet({
+                    exercise: 'Daily Task Routine (3 Exercises)',
+                    totalReps: summary.totalReps,
+                    goodReps: summary.totalReps,
+                    badReps: 0,
+                    formAccuracy: 100,
+                    durationSeconds: summary.totalDuration
+                });
+
+                document.getElementById('summary-title').innerText = 'Routine Complete! 🎉';
+                document.getElementById('summary-exercise-subtitle').innerText = 'Daily Task Routine Summary';
+                document.getElementById('summary-total-reps').innerText = summary.totalReps;
+                document.getElementById('summary-duration').innerText = summary.totalDuration + 's';
+                document.getElementById('summary-accuracy').innerText = '100%';
+                document.getElementById('summary-modal').classList.remove('hidden');
+                loadHistoryUI();
+                return;
+            }
+
+            const current = routineManager.getCurrentExercise();
+            startExerciseSession(current.id, current.target, true);
+        }
+
+        window.startSingleWorkout = function(exerciseType) {
+            isRoutineMode = false;
+            const config = EXERCISE_CONFIGS[exerciseType];
+            startExerciseSession(exerciseType, 0, false);
+        };
+
+        function startExerciseSession(exerciseKey, target, routineMode) {
+            currentExerciseKey = exerciseKey;
+            targetReps = target;
+            const config = EXERCISE_CONFIGS[exerciseKey];
 
             repCounter = new RepCounterMachine({
                 upThreshold: config.upThreshold,
@@ -201,7 +322,9 @@
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('workout-view').classList.remove('hidden');
             document.getElementById('active-exercise-name').innerText = config.name;
+            document.getElementById('active-session-title').innerText = routineMode ? `Daily Routine (${routineManager.currentIndex + 1}/3)` : 'Solo Practice';
             document.getElementById('hud-rep-count').innerText = '0';
+            document.getElementById('hud-target-display').innerText = routineMode ? ` / ${target}` : '';
             document.getElementById('hud-form-status').innerText = 'Good';
 
             sessionStartTime = Date.now();
@@ -221,9 +344,13 @@
 
                             if (result.repCompleted) {
                                 document.getElementById('hud-rep-count').innerText = result.reps;
+
+                                // Check if routine target reached
+                                if (isRoutineMode && result.reps >= targetReps) {
+                                    onRoutineExerciseComplete();
+                                }
                             }
 
-                            // Check form rules
                             const formResult = config.checkForm(landmarks);
                             const formStatusEl = document.getElementById('hud-form-status');
                             if (formResult.isGood) {
@@ -247,18 +374,67 @@
                     }
                 );
 
-                await poseTracker.init();
-
-                const loadingEl = document.getElementById('workout-loading');
-                if (loadingEl) loadingEl.classList.add('hidden');
+                poseTracker.init().then(() => {
+                    const loadingEl = document.getElementById('workout-loading');
+                    if (loadingEl) loadingEl.classList.add('hidden');
+                });
             } catch (e) {
                 console.error("Failed to start pose tracker:", e);
-                alert("Could not start webcam or MediaPipe Pose. Please ensure camera permissions are allowed.");
+                alert("Could not start webcam or MediaPipe Pose.");
                 stopWorkout();
             }
+        }
+
+        function onRoutineExerciseComplete() {
+            if (poseTracker) {
+                poseTracker.stop();
+                poseTracker = null;
+            }
+
+            const durationSeconds = Math.round((Date.now() - sessionStartTime) / 1000);
+            const current = routineManager.getCurrentExercise();
+            routineManager.recordResult(current.id, repCounter.reps, repCounter.reps, 0, durationSeconds);
+
+            // Hide workout view
+            document.getElementById('workout-view').classList.add('hidden');
+            document.getElementById('workout-loading').classList.remove('hidden');
+
+            // Advance queue and get next exercise name for rest timer screen
+            const nextEx = routineManager.advance();
+            if (nextEx) {
+                document.getElementById('rest-next-exercise').innerText = nextEx.name;
+            } else {
+                document.getElementById('rest-next-exercise').innerText = 'Finalizing...';
+            }
+
+            // Show 2-minute rest timer
+            document.getElementById('rest-modal').classList.remove('hidden');
+
+            restTimer = new RestTimer(
+                120,
+                (remaining) => {
+                    const mins = String(Math.floor(remaining / 60)).padStart(2, '0');
+                    const secs = String(remaining % 60).padStart(2, '0');
+                    document.getElementById('rest-timer-display').innerText = `${mins}:${secs}`;
+                },
+                () => {
+                    document.getElementById('rest-modal').classList.add('hidden');
+                    runNextRoutineExercise();
+                }
+            );
+            restTimer.start();
+        }
+
+        window.skipRestTimer = function() {
+            if (restTimer) {
+                restTimer.skip();
+            }
+            document.getElementById('rest-modal').classList.add('hidden');
+            runNextRoutineExercise();
         };
 
         window.stopWorkout = function() {
+            if (restTimer) restTimer.stop();
             if (poseTracker) {
                 poseTracker.stop();
                 poseTracker = null;
@@ -268,8 +444,7 @@
             const durationSeconds = sessionStartTime ? Math.round((Date.now() - sessionStartTime) / 1000) : 10;
             const exerciseName = document.getElementById('active-exercise-name').innerText;
 
-            // Save set data
-            lastSavedSet = saveWorkoutSet({
+            lastSummaryData = saveWorkoutSet({
                 exercise: exerciseName,
                 totalReps: totalReps,
                 goodReps: totalReps,
@@ -278,16 +453,18 @@
                 durationSeconds: durationSeconds
             });
 
-            // Hide workout view and show summary modal
+            isRoutineMode = false;
             document.getElementById('workout-view').classList.add('hidden');
+            document.getElementById('dashboard-view').classList.remove('hidden');
             document.getElementById('workout-loading').classList.remove('hidden');
 
-            document.getElementById('summary-exercise-subtitle').innerText = exerciseName + ' Set';
+            document.getElementById('summary-title').innerText = 'Workout Complete!';
+            document.getElementById('summary-exercise-subtitle').innerText = exerciseName + ' Summary';
             document.getElementById('summary-total-reps').innerText = totalReps;
             document.getElementById('summary-duration').innerText = durationSeconds + 's';
             document.getElementById('summary-accuracy').innerText = '100%';
-
             document.getElementById('summary-modal').classList.remove('hidden');
+            loadHistoryUI();
         };
 
         window.closeSummaryModal = function() {

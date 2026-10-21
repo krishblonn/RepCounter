@@ -9,7 +9,7 @@
 <body class="bg-slate-900 text-slate-100 min-h-screen p-8 font-sans">
     <div class="max-w-2xl mx-auto space-y-6">
         <h1 class="text-3xl font-bold text-emerald-400">RepCounter Unit Tests</h1>
-        <p class="text-slate-400">Testing angle calculations and state machine rep counting logic.</p>
+        <p class="text-slate-400">Testing angle calculations, state machine rep counting, and Daily Task Routine progression.</p>
 
         <div id="test-results" class="bg-slate-800 border border-slate-700 rounded-xl p-6 space-y-4 font-mono text-sm">
             <p class="text-yellow-400">Running tests...</p>
@@ -18,6 +18,7 @@
 
     <script type="module">
         import { calculateAngle, RepCounterMachine } from '../src/counter.js';
+        import { getDailyTargets, saveDailyTargets, RoutineManager } from '../src/routine.js';
 
         const resultsEl = document.getElementById('test-results');
         let output = '';
@@ -29,34 +30,38 @@
         }
 
         try {
-            // Test 1: Angle calculation (Right angle triangle 90 degrees)
+            // Test 1: Angle calculation (90 degrees)
             const a = { x: 0, y: 1 };
-            const b = { x: 0, y: 0 }; // vertex
+            const b = { x: 0, y: 0 };
             const c = { x: 1, y: 0 };
             const angle90 = calculateAngle(a, b, c);
             assert(Math.abs(angle90 - 90) < 0.1, `Expected 90 degrees, got ${angle90}`);
             output += `<div class="text-emerald-400">✓ calculateAngle (90 degrees) passed</div>`;
 
             // Test 2: State machine rep counting sequence
-            // Config: upThreshold >= 160, downThreshold <= 90
             const machine = new RepCounterMachine({ upThreshold: 160, downThreshold: 90 });
-
-            // Initial state: up, 0 reps
             let res = machine.update(170);
             assert(res.reps === 0, 'Should start at 0 reps');
-
-            // Move down (angle <= 90)
-            machine.update(150);
-            machine.update(100);
-            res = machine.update(80); // reaches down state
-
-            // Return up (angle >= 160)
-            machine.update(120);
-            machine.update(150);
-            res = machine.update(165); // completes rep
-
+            machine.update(80); // down
+            res = machine.update(165); // up (completes rep)
             assert(res.repCompleted === true && res.reps === 1, `Expected 1 rep completed, got ${res.reps}`);
-            output += `<div class="text-emerald-400">✓ RepCounterMachine state machine rep counting passed</div>`;
+            output += `<div class="text-emerald-400">✓ RepCounterMachine state machine passed</div>`;
+
+            // Test 3: Daily Task targets persistence
+            const testTargets = { pushups: 15, squats: 20, curls: 12 };
+            saveDailyTargets(testTargets);
+            const loadedTargets = getDailyTargets();
+            assert(loadedTargets.pushups === 15 && loadedTargets.squats === 20 && loadedTargets.curls === 12, 'Targets persistence failed');
+            output += `<div class="text-emerald-400">✓ Daily Task targets localStorage persistence passed</div>`;
+
+            // Test 4: Routine Manager queue progression and auto-advance
+            const manager = new RoutineManager(testTargets);
+            assert(manager.getCurrentExercise().id === 'pushups', 'First exercise should be pushups');
+            manager.recordResult('pushups', 15, 15, 0, 45);
+            const nextEx = manager.advance();
+            assert(nextEx.id === 'squats', 'Second exercise should be squats');
+            assert(!manager.isComplete(), 'Manager should not be complete yet');
+            output += `<div class="text-emerald-400">✓ RoutineManager auto-advance progression passed</div>`;
 
             resultsEl.innerHTML = output;
         } catch (e) {

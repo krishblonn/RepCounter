@@ -1,0 +1,7 @@
+devpost/learner-profile.md
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/

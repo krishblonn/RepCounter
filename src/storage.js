@@ -7,7 +7,9 @@ const STORAGE_KEY = 'repcounter_history';
 export function getWorkoutHistory() {
     try {
         const data = localStorage.getItem(STORAGE_KEY);
-        return data ? JSON.parse(data) : [];
+        const history = data ? JSON.parse(data) : [];
+        // Filter out any zero-rep or canceled entries
+        return history.filter(item => item && item.totalReps > 0);
     } catch (e) {
         console.error('Failed to load workout history from localStorage', e);
         return [];
@@ -15,6 +17,10 @@ export function getWorkoutHistory() {
 }
 
 export function saveWorkoutSet(workoutSet) {
+    if (!workoutSet || workoutSet.totalReps <= 0) {
+        // Do not save zero rep workouts or cancellations
+        return null;
+    }
     try {
         const history = getWorkoutHistory();
         const newSet = {

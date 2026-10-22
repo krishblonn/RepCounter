@@ -12,7 +12,6 @@
 
 ## 📸 Demo Preview
 
-> *Replace `demo.gif` with your actual demo recording or screenshot.*
 
 ![RepCounter Demo](dark.png)
 

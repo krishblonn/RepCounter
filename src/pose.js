@@ -59,8 +59,8 @@ export class PoseTracker {
                 }
 
                 // Draw skeleton connectors and landmarks
-                window.drawConnectors(ctx, landmarks, window.POSE_CONNECTIONS, { color: '#10B981', lineWidth: 4 });
-                window.drawLandmarks(ctx, landmarks, { color: '#34D399', lineWidth: 2, radius: 4 });
+                window.drawConnectors(ctx, landmarks, window.POSE_CONNECTIONS, { color: '#7CFFB2', lineWidth: 4 });
+                window.drawLandmarks(ctx, landmarks, { color: '#7CFFB2', lineWidth: 2, radius: 4 });
 
                 // Pass landmarks to exercise counter/rules callback
                 if (this.onResultsCallback) {
